@@ -22,10 +22,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by Archish on 10/6/16.
+ * Created by Thushar on 3/8/17.
  */
 
-@Autonomous(name = "AutoRedNewV8", group = "Test") // change name
+@Autonomous(name = "AutoRedNewV12", group = "Test") // change name
 public class AutoRedNew extends NeutLinearOpMode { // change file name
     public void main() throws InterruptedException {
 
@@ -50,28 +50,52 @@ public class AutoRedNew extends NeutLinearOpMode { // change file name
             telemetry.addData("imu", robot.imu.getHeading());
             telemetry.update();
 //            robot.redServo.setDirection(Servo.Direction.REVERSE);
-            robot.blueServo.setDirection(Servo.Direction.FORWARD);
-            robot.blueServo.setPosition(1);
-//            robot.redServo.setPosition(.03);
+            robot.redServo.setPower(0);
             robot.armServo.setPosition(0);
 
         }
         waitForStart();
-
-
-        robot.drivePID(.5,33,Direction.FORWARD, 100 ,0);
-        sleep(100);
-        robot.shootBall(1, 1.5);
-        robot.armMove();
-        robot.shootBall(1, 1.5);
-        robot.turnPIDSlow(0.3,45, Direction.LEFT, 2.0, 1000);
-        sleep(100);
-        robot.drivePID(.7,77,Direction.FORWARD,100, 45);
-        robot.touchSensorMoveFront(.3);
-        robot.drivePID(.3, 8, Direction.BACKWARD,100,0);
-//        robot.turnPIDCustomKPKIKD(.3, 0, Direction.RIGHT, 2.0, 1000, .015, .08,0);
-//        robot.colorODSForward(.4,.4);
+        robot.driveTrain.resetEncoders();
+            robot.driveByTime(.4, 1);
+//        robot.encoderDriveForward(.1, 28, 28, 4);
+//        sleep(100);
+//        robot.shootBall(1, 1.5);
+//        robot.armMove();
+//        robot.shootBall(1, 1.5);
+//        robot.turnPIDSlow(0.3,38, Direction.LEFT, 2.0, 10);
+//        sleep(100);
+//        robot.driveTrain.resetEncoders();
+//        robot.driveTrain.runUsingEncoder();
+//        robot.encoderDriveForward(.5, 50, 50, 2);
+//        robot.driveTrain.resetEncoders();
+//        robot.touchSensorMoveFront(.2);
+//        robot.driveTrain.resetEncoders();
+//        robot.encoderDriveBackward(.3, 8, 8, 3);
+//        robot.driveTrain.runUsingEncoder();
+//        robot.turnPIDSlow(.7, -2, Direction.RIGHT, 2.0, 10);
 //        sleep(250);
+//        robot.detectColorRed(.2);
+//        robot.redServo.setPower(-1);
+//        sleep(2000);
+//        robot.redServo.setPower(1);
+//        sleep(1500);
+//        robot.redServo.setPower(0);
+//        robot.driveTrain.runUsingEncoder();
+//        robot.driveTrain.resetEncoders();
+//        robot.encoderDriveBackward(.4, 20, 20, 3);
+//        robot.turnPIDSlow(.7, 0, Direction.LEFT, 2.0, 10);
+//        robot.detectColorRed(-.2);
+//        robot.redServo.setPower(-1);
+//        sleep(2000);
+//        robot.redServo.setPower(1);
+//        sleep(1500);
+//        robot.redServo.setPower(0);
+//        robot.turnPIDNotAbsolute(.7, 10, Direction.RIGHT, 2.0, 10);
+//        robot.driveTrain.runUsingEncoder();
+//        robot.driveTrain.resetEncoders();
+//        robot.encoderDriveBackward(.6, 30,30, 3);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+//        robot.encoderDriveForward(.3,2,2,4 );
 //        robot.colorODSBackward(.2,.2);
 //        robot.drivePID(.3,3,Direction.FORWARD,100,0);
 //        robot.colorRedMove();

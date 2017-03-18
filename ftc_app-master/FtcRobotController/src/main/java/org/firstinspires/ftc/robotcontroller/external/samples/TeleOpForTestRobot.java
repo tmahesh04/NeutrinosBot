@@ -33,10 +33,13 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcontroller.internal.FtcOpModeRegister;
 
 /**
  * TeleOp Mode
@@ -65,8 +68,7 @@ public class TeleOpForTestRobot extends OpMode {
         DcMotor motorShoot1;
         DcMotor motorShoot2;
         Servo ballStop;
-        Servo redServo;
-        Servo blueServo;
+        CRServo redServo;
         Servo boxLeft;
         Servo boxRight;
         Servo boxTilt;
@@ -106,17 +108,14 @@ public class TeleOpForTestRobot extends OpMode {
         motorShoot2 = hardwareMap.dcMotor.get("motor_shoot2");
         motorSweep1 = hardwareMap.dcMotor.get("motor_sweep1");
         motorSweep2 = hardwareMap.dcMotor.get("motor_sweep2");
-        blueServo = hardwareMap.servo.get("servo_blue");
-        redServo = hardwareMap.servo.get("servo_red");
+        redServo = hardwareMap.crservo.get("servo_red");
 
     }
 
     @Override
     public void loop() {
-        redServo.setDirection(Servo.Direction.REVERSE);
-        blueServo.setDirection(Servo.Direction.FORWARD);
-        blueServo.setPosition(1);
-        redServo.setPosition(.03);
+
+        redServo.setPower(0);
         float right = -gamepad1.left_stick_y;
         float left = gamepad1.right_stick_y;
 

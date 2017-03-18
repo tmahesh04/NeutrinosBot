@@ -25,10 +25,9 @@ public interface PID_Constants {
 
     double
 
-            KP_STRAIGHT = 0.02,
+            KP_STRAIGHT = 0,
 
     KI_STRAIGHT = 0,
-
     KD_STRAIGHT = 0;
     double CLICKS_PER_INCH = 1120 / 4 / Math.PI;
 

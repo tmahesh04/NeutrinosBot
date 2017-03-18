@@ -81,35 +81,135 @@ public void drive (double power, int distance, Direction DIRECTION){
     driveTrain.StopDriving();
     driveTrain.runUsingEncoder();
 }
-public void drivePID(double power, int distance, Direction DIRECTION, int sleepTime, double targetAngle) {
-
-    int newDistance = convert(distance);
-    driveTrain.runUsingEncoder();
-    driveTrain.setDistance((int) (-newDistance * DIRECTION.value));
-    driveTrain.resetEncoders();
-    driveTrain.runToPosition();
-    while (driveTrain.rightIsBusy() && opModeIsActive()) {
-        double newPowerLeft = power;
-        double imuVal = imu.getHeading();
-        double error = (targetAngle - imuVal);
-        double errorkp = error * KP_STRAIGHT;
-        newPowerLeft = (newPowerLeft + (errorkp) * DIRECTION.value);
-        driveTrain.setPowerRight(power);
-        driveTrain.setPowerLeft(-newPowerLeft);
+    public void test(double speed, double distance, Direction Direction){
+        driveTrain.runUsingEncoder();
+        double targetPosition = (driveTrain.motor3.getCurrentPos() * COUNTS_PER_INCH) + distance;
+        while(driveTrain.motor3.getCurrentPos() < targetPosition) {
+            telemetry.addData("Current Position", driveTrain.motor3.getCurrentPos());
+            telemetry.addData("Target Position", targetPosition);
+            telemetry.update();
+            driveTrain.setPowerMotor1(-speed * Direction.value);
+            driveTrain.setPowerMotor2(-speed * Direction.value);
+            driveTrain.setPowerMotor3(-speed * Direction.value);
+            driveTrain.setPowerMotor4(-speed * Direction.value);
+        }
+        driveTrain.StopDriving();
 
     }
+    public void driveByTime(double shootSpeed, double seconds) throws InterruptedException {
+        if(opModeIsActive()) {
+            driveTrain.runWithoutEncoders();
+            driveTrain.motor1.setPower(-shootSpeed);
+            driveTrain.motor2.setPower(-shootSpeed);
+            driveTrain.motor3.setPower(-shootSpeed);
+            driveTrain.motor4.setPower(-shootSpeed);
+            runtime.reset();
+            while (opModeIsActive() && (runtime.seconds() < seconds)) {}
+            driveTrain.StopDriving();
+        }
+    }
 
-    driveTrain.StopDriving();
-        addSticky("8");
-    driveTrain.runUsingEncoder();
+    public void encoderDriveForward(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+        driveTrain.resetEncoders();
+        driveTrain.runUsingEncoder();
+        int newLeftTarget;
+        int newRightTarget;
 
-    waitNow(sleepTime);
+        // Ensure that the opmode is still active
 
-}
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = (int) driveTrain.getMotor1Pos() + (int) (leftInches * COUNTS_PER_INCH);
+            newRightTarget = (int) driveTrain.getMotor3Pos() + (int) (rightInches * COUNTS_PER_INCH);
+//            driveTrain.motor1SetDistance(-newRightTarget);
+//            driveTrain.motor2SetDistance(-newRightTarget);
+            driveTrain.motor3SetDistance(-newRightTarget);
+//            driveTrain.motor4SetDistance(-newRightTarget);
+            // Turn On RUN_TO_POSITION
+        driveTrain.motor1.runToPosition();
+        driveTrain.motor2.runToPosition();
+            driveTrain.motor3.runToPosition();
+        driveTrain.motor4.runToPosition();
+
+            // reset the timeout time and start motion.
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            while (opModeIsActive() && (driveTrain.isBusy())) {
+                driveTrain.setPowerMotor1(speed);
+                driveTrain.setPowerMotor2(speed);
+                driveTrain.setPowerMotor3(speed);
+                driveTrain.setPowerMotor4(speed);
+                // Display it for the driver.
+                telemetry.addData("Target Position", newLeftTarget);
+                telemetry.addData("Current Position:",
+                        driveTrain.getMotor3Pos());
+                telemetry.update();
+
+            }
+
+            // Stop all motion;
+            driveTrain.StopDriving();
+            // Turn off RUN_TO_POSITION
+            driveTrain.runUsingEncoder();
+            //  sleep(250);   // optional pause after each move
+
+    }
+    public void encoderDriveBackward(double speed,
+                                    double leftInches, double rightInches,
+                                    double timeoutS) {
+        driveTrain.runUsingEncoder();
+        driveTrain.resetEncoders();
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = (int) driveTrain.getMotor1Pos() +  (int) (leftInches * COUNTS_PER_INCH);
+            newRightTarget = (int) driveTrain.getMotor3Pos() + (int)(rightInches * COUNTS_PER_INCH);
+            driveTrain.motor1SetDistance(newRightTarget);
+            driveTrain.motor2SetDistance(newRightTarget);
+            driveTrain.motor3SetDistance(newRightTarget);
+            driveTrain.motor4SetDistance(newRightTarget);
+            // Turn On RUN_TO_POSITION
+            driveTrain.runToPosition();
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            driveTrain.setPowerMotor1(speed);
+            driveTrain.setPowerMotor2(speed);
+            driveTrain.setPowerMotor3(speed);
+            driveTrain.setPowerMotor4(speed);
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            while (opModeIsActive() &&
+                    (driveTrain.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Target Position", newLeftTarget);
+                telemetry.addData( "Current Position:",
+                        driveTrain.getMotor1Pos());
+                telemetry.update();
+
+            }
+
+            // Stop all motion;
+            driveTrain.StopDriving();
+            // Turn off RUN_TO_POSITION
+            driveTrain.runUsingEncoder();
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+
+
+
+
 
     public void drivePID(double power, int distance, double targetAngle, Direction DIRECTION) {
 
-        drivePID(power, distance, DIRECTION, 1000, targetAngle);
 
     }
 
@@ -177,7 +277,7 @@ public void drivePID(double power, int distance, Direction DIRECTION, int sleepT
             double dervitive = (currentError - prevError) / tChange;
             double dervitivekd = dervitive * KD_TURN;
             newPower = (errorkp + integralki + dervitivekd);
-            driveTrain.setPower(power, power);
+            driveTrain.setPower(-power, power);
             prevError = currentError;
             telemetry.addData("TargetAngle", targetAngle);
             telemetry.addData("Heading", imuVAL);
@@ -207,8 +307,8 @@ public void drivePID(double power, int distance, Direction DIRECTION, int sleepT
             double dervitive = (currentError - prevError) / tChange;
             double dervitivekd = dervitive * KD_TURN;
             newPower = (errorkp + integralki + dervitivekd);
-            driveTrain.setPowerRight(newPower *.4);
-            driveTrain.setPowerLeft(-newPower*.4);
+            driveTrain.setPowerRight(newPower *1);
+            driveTrain.setPowerLeft(-newPower*1);
             prevError = currentError;
             telemetry.addData("TargetAngle", targetAngle);
             telemetry.addData("Heading", imuVAL);
@@ -239,8 +339,8 @@ public void drivePID(double power, int distance, Direction DIRECTION, int sleepT
             double dervitive = (currentError - prevError) / tChange;
             double dervitivekd = dervitive * customKD;
             newPower = (errorkp + integralki + dervitivekd);
-            driveTrain.setPowerRight(newPower *.4);
-            driveTrain.setPowerLeft(-newPower*.4);
+            driveTrain.setPowerRight(newPower *1);
+            driveTrain.setPowerLeft(-newPower*1);
             prevError = currentError;
             telemetry.addData("TargetAngle", targetAngle);
             telemetry.addData("Heading", imuVAL);
@@ -270,8 +370,10 @@ public void drivePID(double power, int distance, Direction DIRECTION, int sleepT
             double dervitive = (currentError - prevError) / tChange;
             double dervitivekd = dervitive * KD_TURN;
             newPower = (errorkp + integralki + dervitivekd);
-            driveTrain.setPowerRight(newPower*.25);
-            driveTrain.setPowerLeft(newPower*.25);
+            driveTrain.setPowerMotor3(newPower *1);
+            driveTrain.setPowerMotor4(newPower* 1);
+            driveTrain.setPowerMotor1(-newPower*1);
+            driveTrain.setPowerMotor2(-newPower * 1);
             prevError = currentError;
             telemetry.addData("TargetAngle", targetAngle);
             telemetry.addData("Heading", imuVAL);
@@ -339,17 +441,104 @@ public void drivePID(double power, int distance, Direction DIRECTION, int sleepT
         waitNow(400);
         armServo.setPosition(0);
     }
-    public void touchSensorMoveBack(double maxSpeed, double minSpeed) {
-        while (!touchSensorFront.isPressed() && opModeIsActive()) {
-            driveTrain.setPowerLeft(-maxSpeed);
-            driveTrain.setPowerRight(-maxSpeed);
-
+    public void touchSensorMoveBack(double speed) {
+        while (!touchSensorBack.isPressed() && opModeIsActive()) {
+            driveTrain.runWithoutEncoders();
+            driveTrain.setPowerMotor1(speed);
+            driveTrain.setPowerMotor2(speed);
+            driveTrain.setPowerMotor3(speed);
+            driveTrain.setPowerMotor4(speed);
         }
     }
     public void touchSensorMoveFront(double speed) {
         while (!touchSensorFront.isPressed() && opModeIsActive()) {
-            driveTrain.setPowerLeft(-speed);
-            driveTrain.setPowerRight(-speed);
+            driveTrain.runWithoutEncoders();
+            driveTrain.setPowerMotor1(-speed);
+            driveTrain.setPowerMotor2(-speed);
+            driveTrain.setPowerMotor3(-speed);
+            driveTrain.setPowerMotor4(-speed);
+        }
+    }
+    public void detectColorRed(double power) {
+        driveTrain.runWithoutEncoders();
+        float hsvValues[] = {0F, 0F, 0F};
+        final float values[] = hsvValues;
+        boolean bLedOn = true;
+        boolean bLedOff = false;
+        boolean end = false;
+
+        colorSensor.enableLed(false);
+
+        while (opModeIsActive() && end == false) {
+
+            colorSensor.enableLed(false);
+
+            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+            // send the info back to driver station using telemetry function.
+            telemetry.addData("LED", bLedOn ? "On" : "Off");
+            telemetry.addData("Clear", colorSensor.alpha());
+            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Green", colorSensor.green());
+            telemetry.addData("Blue ", colorSensor.blue());
+            int red = colorSensor.red();
+            int blue = colorSensor.blue();
+
+            if (colorSensor.red() >= 1) {
+                telemetry.addData("Hue", "red");
+                telemetry.update();
+                driveTrain.StopDriving();
+                end = true;
+            } else {
+                telemetry.addData("Not", "Red");
+                telemetry.update();
+                driveTrain.setPowerMotor1(-power);
+                driveTrain.setPowerMotor2(-power);
+                driveTrain.setPowerMotor3(-power);
+                driveTrain.setPowerMotor4(-power);
+                end = false;
+            }
+        }
+    }
+    public void detectColorBlue(double power) {
+        driveTrain.runWithoutEncoders();
+        float hsvValues[] = {0F, 0F, 0F};
+        final float values[] = hsvValues;
+        boolean bLedOn = true;
+        boolean bLedOff = false;
+        boolean end = false;
+
+        colorSensor.enableLed(false);
+
+        while (opModeIsActive() && end == false) {
+
+            colorSensor.enableLed(false);
+
+            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+            // send the info back to driver station using telemetry function.
+            telemetry.addData("LED", bLedOn ? "On" : "Off");
+            telemetry.addData("Clear", colorSensor.alpha());
+            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Green", colorSensor.green());
+            telemetry.addData("Blue ", colorSensor.blue());
+            int red = colorSensor.red();
+            int blue = colorSensor.blue();
+
+            if (colorSensor.blue() >= 2) {
+                telemetry.addData("Hue", "Blue");
+                telemetry.update();
+                driveTrain.StopDriving();
+                end = true;
+            } else {
+                telemetry.addData("Not", "Blue");
+                telemetry.update();
+                driveTrain.setPowerMotor1(-power);
+                driveTrain.setPowerMotor2(-power);
+                driveTrain.setPowerMotor3(-power);
+                driveTrain.setPowerMotor4(-power);
+                end = false;
+            }
         }
     }
     public void colorBlueMove() {
@@ -407,14 +596,18 @@ public void drivePID(double power, int distance, Direction DIRECTION, int sleepT
     }
     public void colorODSForward(double leftSpeed, double rightSpeed) {
         boolean end = false;
-        while (opModeIsActive() && !end) {
+        driveTrain.runWithoutEncoders();
+        while (opModeIsActive() && end == false) {
             double reflectance = opticalDistanceSensor.getRawLightDetected();
-            if (reflectance < .45) {
-                driveTrain.setPowerLeft(-leftSpeed);
-                driveTrain.setPowerRight(-rightSpeed);
-            } else {
+            if (reflectance > .45) {
                 driveTrain.StopDriving();
                 end = true;
+            } else {
+                driveTrain.setPowerMotor1(-leftSpeed);
+                driveTrain.setPowerMotor2(-leftSpeed);
+                driveTrain.setPowerMotor3(-rightSpeed);
+                driveTrain.setPowerMotor4(-rightSpeed);
+                end = false;
              }
         }
     }
@@ -459,6 +652,8 @@ public void drivePID(double power, int distance, Direction DIRECTION, int sleepT
             }
         }
     }
+
+
 
 
     public static int convert(int TICKS) {

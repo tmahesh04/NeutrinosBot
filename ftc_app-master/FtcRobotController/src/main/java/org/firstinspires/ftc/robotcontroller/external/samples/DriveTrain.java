@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class DriveTrain implements PID_Constants {
 
-    private Motor motor1 , motor2, motor3, motor4;
+    public Motor motor1 , motor2, motor3, motor4;
 
     public DriveTrain(String name1, String name2, String name3, String name4) {
 
@@ -33,13 +33,37 @@ public class DriveTrain implements PID_Constants {
     public void resetEncoders () {
 
         motor1.resetEncoder();
-
         motor2.resetEncoder();
-
         motor3.resetEncoder();
-
         motor4.resetEncoder();
 
+
+    }
+    public double getMotor1Pos()
+    {
+        double motor1Pos = motor1.getCurrentPos();
+        return motor1Pos;
+    }
+    public double getMotor3Pos()
+    {
+        double motor3Pos = motor3.getCurrentPos();
+        return motor3Pos;
+    }
+    public void motor1SetDistance(int distance)
+    {
+        motor1.setDistance(distance);
+    }
+    public void motor2SetDistance(int distance)
+    {
+        motor2.setDistance(distance);
+    }
+    public void motor3SetDistance(int distance)
+    {
+        motor3.setDistance(distance);
+    }
+    public void motor4SetDistance(int distance)
+    {
+        motor4.setDistance(distance);
     }
 
     public void setPower (double leftPower, double rightPower) {
@@ -70,15 +94,13 @@ public class DriveTrain implements PID_Constants {
 
     }
 
+
     public void setDistance(int distance){
 
         motor1.setDistance(distance);
 
-        motor2.setDistance(distance);
-
         motor3.setDistance(distance);
 
-        motor4.setDistance(distance);
 
     }
 
@@ -87,22 +109,20 @@ public class DriveTrain implements PID_Constants {
         motor1.runUsingEncoder();
 
         motor2.runUsingEncoder();
-
         motor3.runUsingEncoder();
-
         motor4.runUsingEncoder();
+
 
     }
 
     public void runToPosition(){
 
-        motor1.runToPosition();
-
-        motor2.runToPosition();
-
+//        motor1.runToPosition();
+//
+//        motor2.runToPosition();
         motor3.runToPosition();
+        //motor4.runToPosition();
 
-        motor4.runToPosition();
 
     }
 
@@ -166,7 +186,7 @@ public class DriveTrain implements PID_Constants {
 
     public boolean isBusy() {
 
-        return (motor1.isBusy() && motor2.isBusy() && motor3.isBusy() && motor4.isBusy());
+        return (motor1.isBusy()  && motor3.isBusy());
 
     }
 
@@ -180,18 +200,9 @@ public class DriveTrain implements PID_Constants {
 
         double motor1Pos = motor1.getCurrentPos();
 
-        double motor2Pos = motor2.getCurrentPos();
-
         double motor3Pos = motor3.getCurrentPos();
 
-        double motor4Pos = motor4.getCurrentPos();
-
-        double motor12Pos = (motor1Pos + motor2Pos) / 2;
-
-        double motor34Pos = (motor3Pos + motor4Pos) / 2;
-
-        double currentPos = (motor12Pos + motor34Pos) / 2;
-
+        double currentPos = (motor1Pos + motor3Pos) / 2;
         return currentPos;
     }
     public void setTwoUsingEncoder()
@@ -209,6 +220,23 @@ public class DriveTrain implements PID_Constants {
         motor1.runToPosition();
         motor4.runToPosition();
     }
+    public void setPowerMotor1(double power)
+    {
+        motor1.setPower(power);
+    }
+    public void setPowerMotor2(double power)
+    {
+        motor2.setPower(power);
+    }
+    public void setPowerMotor3(double power)
+    {
+        motor3.setPower(power);
+    }
+    public void setPowerMotor4(double power)
+    {
+        motor4.setPower(power);
+    }
+
     public boolean twoIsBusy()
     {
         return (motor1.isBusy() && motor4.isBusy());

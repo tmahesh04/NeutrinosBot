@@ -84,7 +84,7 @@ public class SensorMRColor  extends LinearOpMode {
     boolean bLedOff = false;
 
     // get a reference to our ColorSensor object.
-    colorSensor = hardwareMap.colorSensor.get("sensor_color");
+    colorSensor = hardwareMap.colorSensor.get("color_sensor");
 
     // Set the LED in the beginning
     colorSensor.enableLed(false);
