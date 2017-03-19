@@ -17,7 +17,7 @@ import static android.os.Build.ID;
 public interface PID_Constants {
     double
     //KP_TURN = 0.0083,
-            KP_TURN = 0.003,
+            KP_TURN = 0.025,
     KI_TURN = 0.0002,
     //KD_TURN = 0.0006,
     KD_TURN = 0,

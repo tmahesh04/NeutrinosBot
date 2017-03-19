@@ -47,7 +47,9 @@ public class AutoRedNew extends NeutLinearOpMode { // change file name
         //NeutrinosBEBE robot = new NeutrinosBEBE(telemetry);
         while (!isStarted()) {
             telemetry.addLine("hello aneesha");
-            telemetry.addData("imu", robot.imu.getHeading());
+            robot.imu.getHeading();
+            robot.imu.reset();
+            telemetry.addData("imu", robot.imu.getNormalized());
             telemetry.update();
 //            robot.redServo.setDirection(Servo.Direction.REVERSE);
             robot.redServo.setPower(0);
@@ -55,64 +57,28 @@ public class AutoRedNew extends NeutLinearOpMode { // change file name
 
         }
         waitForStart();
+        double parallel = robot.imu.getNormalized();
         robot.driveTrain.resetEncoders();
-            robot.driveByTime(.4, 1);
-//        robot.encoderDriveForward(.1, 28, 28, 4);
-//        sleep(100);
-//        robot.shootBall(1, 1.5);
-//        robot.armMove();
-//        robot.shootBall(1, 1.5);
-//        robot.turnPIDSlow(0.3,38, Direction.LEFT, 2.0, 10);
-//        sleep(100);
-//        robot.driveTrain.resetEncoders();
-//        robot.driveTrain.runUsingEncoder();
-//        robot.encoderDriveForward(.5, 50, 50, 2);
-//        robot.driveTrain.resetEncoders();
-//        robot.touchSensorMoveFront(.2);
-//        robot.driveTrain.resetEncoders();
-//        robot.encoderDriveBackward(.3, 8, 8, 3);
-//        robot.driveTrain.runUsingEncoder();
-//        robot.turnPIDSlow(.7, -2, Direction.RIGHT, 2.0, 10);
-//        sleep(250);
-//        robot.detectColorRed(.2);
-//        robot.redServo.setPower(-1);
-//        sleep(2000);
-//        robot.redServo.setPower(1);
-//        sleep(1500);
-//        robot.redServo.setPower(0);
-//        robot.driveTrain.runUsingEncoder();
-//        robot.driveTrain.resetEncoders();
-//        robot.encoderDriveBackward(.4, 20, 20, 3);
-//        robot.turnPIDSlow(.7, 0, Direction.LEFT, 2.0, 10);
-//        robot.detectColorRed(-.2);
-//        robot.redServo.setPower(-1);
-//        sleep(2000);
-//        robot.redServo.setPower(1);
-//        sleep(1500);
-//        robot.redServo.setPower(0);
-//        robot.turnPIDNotAbsolute(.7, 10, Direction.RIGHT, 2.0, 10);
-//        robot.driveTrain.runUsingEncoder();
-//        robot.driveTrain.resetEncoders();
-//        robot.encoderDriveBackward(.6, 30,30, 3);
-        ////////////////////////////////////////////////////////////////////////////////////////////
-//        robot.encoderDriveForward(.3,2,2,4 );
-//        robot.colorODSBackward(.2,.2);
-//        robot.drivePID(.3,3,Direction.FORWARD,100,0);
-//        robot.colorRedMove();
-//        robot.turnPIDSlow(.3, 5, Direction.LEFT, 1.0,0);
-//        robot.blueServo.setPosition(1);
-//        robot.redServo.setPosition(.03);
-//        robot.drivePID(.3, 12, Direction.BACKWARD, 100, 0);
-//        robot.colorODSBackward(.4,.4);
-//        sleep(250);
-//        robot.colorODSForward(.2,.2);
-//        robot.drivePID(.3,2,Direction.FORWARD,100,0);
-//        robot.colorRedMove();
-//        robot.blueServo.setPosition(1);
-//        robot.redServo.setPosition(.03);
-//        robot.turnPID(.3,10,Direction.LEFT,1.5,100);
-//        robot.drivePID(.6,48, Direction.BACKWARD, 100, 20);
-//        sleep(3000);
+        robot.driveByTime(.4, .85);
+        robot.shootBall(1, 1.5);
+        robot.armMove();
+        robot.shootBall(1, 1.5);
+        robot.turnUpdate(0.4,30);
+        robot.driveTrain.resetEncoders();
+        robot.driveTrain.runUsingEncoder();
+        robot.touchSensorMoveFront(.4);
+        robot.driveTrain.resetEncoders();
+        robot.driveTrain.runUsingEncoder();
+        robot.driveByTime(-.4, .2);
+        robot.driveTrain.runUsingEncoder();
+        robot.turnUpdate(.30,robot.turnDiff(parallel,0));
+        robot.detectColorRed(0.18);
+        robot.pressBeacon();
+        robot.driveByTime(-0.3, 1.2);
+        robot.turnUpdate(.25,robot.turnDiff(parallel,0));
+        robot.detectColorRed(-0.3);
+        robot.driveByTime(.2, .3);
+        robot.pressBeacon();
     }
 
 }

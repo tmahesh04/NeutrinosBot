@@ -317,6 +317,32 @@ public void drive (double power, int distance, Direction DIRECTION){
         }
         driveTrain.StopDriving();
     }
+    //power will always be positive, angle will determine direction (left is positive)
+    public void turnUpdate(double power, double angle) {
+        driveTrain.runWithoutEncoders();
+        int d_constant;
+        if (angle > 0){
+            d_constant = 1;
+        }else{
+            d_constant = -1;
+        }
+        imu.reset();
+        waitNow(500);
+        double targetAngle =  Math.abs(angle);
+            while ((opModeIsActive()) && (Math.abs(imu.getHeading()) < targetAngle)) {
+                double currentError = targetAngle - imu.getHeading();//
+                driveTrain.setPowerRight(power * d_constant);
+                driveTrain.setPowerLeft(-power * d_constant);
+                telemetry.addData("TargetAngle", targetAngle);
+                telemetry.addData("Heading", imu.getHeading());
+                telemetry.addData("AngleLeftToCover", currentError);
+                telemetry.addData("Normalized", imu.getNormalized());
+                telemetry.update();
+            }
+            driveTrain.StopDriving();
+        waitNow(500);
+        }
+
 
     public void turnPIDCustomKPKIKD(double power, int angle, Direction DIRECTION, double timeOut, int sleepTime, double customKP, double customKI, double customKD) {
         double targetAngle = imu.adjustAngle((DIRECTION.value * angle));
@@ -344,6 +370,26 @@ public void drive (double power, int distance, Direction DIRECTION){
             prevError = currentError;
             telemetry.addData("TargetAngle", targetAngle);
             telemetry.addData("Heading", imuVAL);
+            telemetry.addData("AngleLeftToCover", currentError);
+            telemetry.update();
+        }
+        driveTrain.StopDriving();
+    }
+    public void testturn(double power, int angle, Direction DIRECTION, double timeOut) {
+        double targetAngle = imu.adjustAngle((DIRECTION.value * angle));
+        double acceptableError = 0.5;
+        double currentError = 1;
+        double prevError = 0;
+        double integral = 0;
+        double newPower = power;
+        double previousTime = 0;
+        Clock clock = new Clock("clock");
+        while (opModeIsActive() && (imu.adjustAngle(Math.abs(currentError)) > acceptableError)) {
+            driveTrain.setPowerRight(power *DIRECTION.value);
+            driveTrain.setPowerLeft(-power*DIRECTION.value);
+            prevError = currentError;
+            telemetry.addData("TargetAngle", targetAngle);
+            telemetry.addData("Heading", imu.getHeading());
             telemetry.addData("AngleLeftToCover", currentError);
             telemetry.update();
         }
@@ -381,6 +427,17 @@ public void drive (double power, int distance, Direction DIRECTION){
             telemetry.update();
         }
         driveTrain.StopDriving();
+    }
+    public double turnDiff(double measureOne, double errorFix) {
+        return  (measureOne - imu.getNormalized()) + errorFix;
+    }
+    public void pressBeacon()
+    {
+        redServo.setPower(-1);
+        waitNow(2000);
+        redServo.setPower(1);
+        waitNow(1500);
+        redServo.setPower(0);
     }
     public void turnPIDNotAbsolute(double power, int angle, Direction DIRECTION, double timeOut, int sleepTime) {
         double targetAngle = imu.adjustAngle(imu.getHeading() + (DIRECTION.value * angle));

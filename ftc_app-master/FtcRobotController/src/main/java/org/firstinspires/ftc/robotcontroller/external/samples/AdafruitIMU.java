@@ -41,6 +41,8 @@ import java.util.Locale;
 public class AdafruitIMU {
     private final BNO055IMU imu;
     private final String name;
+    private double heading;
+    private double zero;
     public AdafruitIMU(String name) {
         this.name = name;
         imu = FtcOpModeRegister.opModeManager.getHardwareMap().get(BNO055IMU.class, name);
@@ -101,21 +103,21 @@ public class AdafruitIMU {
     }
 
     public double adjustAngle(double angle) {
-
         while (angle > 180)  angle -= 360;
-
         while (angle <= -180) angle += 360;
-
         return angle;
-
     } //puts angle from 0-360 to -180 to 180
-
+    public void reset () {
+            zero = getAngles()[0];
+    }
     public double getHeading() {
 
-        return getAngles()[0];
+        return getAngles()[0] - zero;
 
     }
-
+    public double getNormalized () {
+        return getAngles()[0];
+    }
     public double getPitch() {
 
         return getAngles()[1];

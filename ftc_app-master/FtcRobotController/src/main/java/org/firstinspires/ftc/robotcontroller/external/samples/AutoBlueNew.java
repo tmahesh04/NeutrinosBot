@@ -25,7 +25,7 @@ import com.qualcomm.robotcore.util.Range;
  * Created by Thushar on 3/8/17.
  */
 
-@Autonomous(name = "AutoBlueNewV18", group = "Test") // change name
+@Autonomous(name = "AutoBlueNewV20", group = "Test") // change name
 public class AutoBlueNew extends LinearOpMode { // change file name
     public void main() throws InterruptedException {
 
@@ -53,14 +53,20 @@ public class AutoBlueNew extends LinearOpMode { // change file name
             telemetry.addData("MotorPos", robot.driveTrain.motor3.getCurrentPos());
             telemetry.addData("imu", robot.imu.getHeading());
             telemetry.update();
-
             robot.redServo.setPower(0);
             robot.armServo.setPosition(0);
 
         }
         waitForStart();
-
-        robot.test(.5, 80, Direction.FORWARD);
+          double parallel = robot.imu.getNormalized();
+          robot.driveTrain.resetEncoders();
+          robot.turnUpdate(.4, .85);
+//        sleep(1000);
+//        robot.turnUpdate(.5,45,Direction.LEFT);
+//        sleep(1000);
+//        robot.turnUpdate(.5,150, Direction.RIGHT);
+//        sleep(1000);
+//        robot.turnUpdate(.5,150 ,Direction.LEFT);
 //        robot.driveTrain.resetEncoders();
 //        sleep(100);
 //        robot.shootBall(1, 1.5);
