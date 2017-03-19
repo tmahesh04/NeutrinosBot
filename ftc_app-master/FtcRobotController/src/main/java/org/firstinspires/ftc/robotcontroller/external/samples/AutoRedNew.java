@@ -75,8 +75,8 @@ public class AutoRedNew extends NeutLinearOpMode { // change file name
         robot.detectColorRed(0.18);
         robot.pressBeacon();
         robot.driveByTime(-0.3, 1.2);
-        robot.turnUpdate(.25,robot.turnDiff(parallel,0));
-        robot.detectColorRed(-0.3);
+        robot.turnUpdate(.30,robot.turnDiff(parallel,0));
+        robot.detectColorRed(-.18);
         robot.driveByTime(.2, .3);
         robot.pressBeacon();
     }

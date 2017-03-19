@@ -318,7 +318,7 @@ public void drive (double power, int distance, Direction DIRECTION){
         driveTrain.StopDriving();
     }
     //power will always be positive, angle will determine direction (left is positive)
-    public void turnUpdate(double power, double angle) {
+    public void turnUpdate(double leftPower, double rightPower, double angle) {
         driveTrain.runWithoutEncoders();
         int d_constant;
         if (angle > 0){
@@ -331,8 +331,8 @@ public void drive (double power, int distance, Direction DIRECTION){
         double targetAngle =  Math.abs(angle);
             while ((opModeIsActive()) && (Math.abs(imu.getHeading()) < targetAngle)) {
                 double currentError = targetAngle - imu.getHeading();//
-                driveTrain.setPowerRight(power * d_constant);
-                driveTrain.setPowerLeft(-power * d_constant);
+                driveTrain.setPowerRight(leftPower * d_constant);
+                driveTrain.setPowerLeft(-rightPower * d_constant);
                 telemetry.addData("TargetAngle", targetAngle);
                 telemetry.addData("Heading", imu.getHeading());
                 telemetry.addData("AngleLeftToCover", currentError);
@@ -342,6 +342,9 @@ public void drive (double power, int distance, Direction DIRECTION){
             driveTrain.StopDriving();
         waitNow(500);
         }
+    public void turnUpdate(double power, double angle){
+        turnUpdate(power, power, angle);
+    }
 
 
     public void turnPIDCustomKPKIKD(double power, int angle, Direction DIRECTION, double timeOut, int sleepTime, double customKP, double customKI, double customKD) {

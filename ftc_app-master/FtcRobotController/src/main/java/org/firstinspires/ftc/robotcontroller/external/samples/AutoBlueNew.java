@@ -25,16 +25,13 @@ import com.qualcomm.robotcore.util.Range;
  * Created by Thushar on 3/8/17.
  */
 
-@Autonomous(name = "AutoBlueNewV20", group = "Test") // change name
-public class AutoBlueNew extends LinearOpMode { // change file name
+@Autonomous(name = "AutoBlueNewV65", group = "Test") // change name
+public class AutoBlueNew extends NeutLinearOpMode { // change file name
     public void main() throws InterruptedException {
 
     }
-
-
-
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runLinearOpMode() throws InterruptedException {
         final double     COUNTS_PER_MOTOR_REV    = 560 ;    // eg: TETRIX Motor Encoder
         final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
         final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -47,20 +44,38 @@ public class AutoBlueNew extends LinearOpMode { // change file name
         double HIGH_POWER = 0.90;
 
 
-        NeutrinosBEBE robot = new NeutrinosBEBE(telemetry);
+        //NeutrinosBEBE robot = new NeutrinosBEBE(telemetry);
         while (!isStarted()) {
             telemetry.addLine("hello aneesha");
-            telemetry.addData("MotorPos", robot.driveTrain.motor3.getCurrentPos());
-            telemetry.addData("imu", robot.imu.getHeading());
+            robot.imu.getHeading();
+            robot.imu.reset();
+            telemetry.addData("imu", robot.imu.getNormalized());
             telemetry.update();
+//            robot.redServo.setDirection(Servo.Direction.REVERSE);
             robot.redServo.setPower(0);
             robot.armServo.setPosition(0);
-
         }
-        waitForStart();
-          double parallel = robot.imu.getNormalized();
-          robot.driveTrain.resetEncoders();
-          robot.turnUpdate(.4, .85);
+        double parallel = robot.imu.getNormalized() + 180;
+        robot.driveTrain.resetEncoders();
+        robot.driveByTime(.4, .85);
+        robot.shootBall(1, 1.5);
+        robot.armMove();
+        robot.shootBall(1, 1.5);
+        robot.turnUpdate(.4,120);
+        robot.driveTrain.resetEncoders();
+        robot.driveTrain.runUsingEncoder();
+        robot.touchSensorMoveBack(.4);
+        robot.driveTrain.runUsingEncoder();
+        robot.driveByTime(.3, .4);
+        robot.turnUpdate(.3, 0, robot.turnDiff(parallel,-2));
+        robot.detectColorBlue(-.18);
+        robot.driveByTime(.2, .2);
+        robot.pressBeacon();
+        robot.driveByTime(0.18, 1.2);
+        robot.turnUpdate(.3, robot.turnDiff(parallel,-2));
+        robot.detectColorBlue(.18);
+        robot.driveByTime(-.2, .2);
+        robot.pressBeacon();
 //        sleep(1000);
 //        robot.turnUpdate(.5,45,Direction.LEFT);
 //        sleep(1000);
@@ -115,6 +130,5 @@ public class AutoBlueNew extends LinearOpMode { // change file name
 //        robot.drivePID(.7,40, Direction.FORWARD, 100, 20);
 //        sleep(3000);
     }
-
 }
 
